@@ -1,0 +1,125 @@
+openapi: 3.0.2
+info:
+  title: Shopping Center
+  description: >-
+     This API provides us with different information about the users to use in the shopping centre to provide a better experience in the visit
+  version: '1.0'
+  termsOfService: 'http://spilab.es/'
+  contact:
+    name: Spilab
+    url: 'http://spilab.es/'
+    email: spilab.uex@gmail.com
+tags:
+  - name: User
+paths:
+  /temperature:
+    get:
+      summary: Gets the environment temperature
+      operationId: getTemperature
+      tags:
+      - User
+      x-dac:
+        operand: temperature
+        operator:
+          type: math
+          name: avg
+        conditions:
+          precision: 10
+          temporal: 1500 
+      responses:
+        200:
+          $ref: '#/components/responses/200Temperature'
+        404:
+          $ref: '#/components/responses/404'
+  /location:
+    get:
+      summary: Gets the current location
+      operationId: getLocation
+      tags:
+      - User
+      x-dac:
+        operand: location
+        operator:
+          type: specfic
+          name: heatmap
+        conditions:
+          precision: 10
+          temporal: 1800 
+      responses:
+        200:
+          $ref: '#/components/responses/200Location'
+        404:
+          $ref: '#/components/responses/404'
+  /music:
+    get:
+      summary: Gets a list of favourite music genres
+      operationId: getMusic
+      tags:
+      - User
+      x-dac:
+        operand: music
+        operator:
+          type: specfic
+          name: selectMusic
+        conditions:
+          precision: 10
+          temporal: 2000
+      responses:
+        200:
+          $ref: '#/components/responses/200Music'
+        404:
+          $ref: '#/components/responses/404'
+    
+components:
+  schemas:
+    Temperature:
+      type: object
+      properties:
+        temperature:
+          type: number
+          format: double
+          example: 38.48492
+    Location:
+      type: object
+      properties:
+        latitude:
+          type: number
+          format: double
+          example: 38.48492
+        longitude:
+          type: number
+          format: double
+          example: -6.58794
+    MusicArray:
+      type: array
+      items:
+        type: string
+        example: "[pop,rock,indie]"
+  responses:
+    
+    '200Location':
+      description: Successful response
+      content:
+       application/json:
+        schema:
+          $ref: '#/components/schemas/Location'
+    '200Temperature':
+      description: Successful response
+      content:
+       application/json:
+        schema:
+          $ref: '#/components/schemas/Temperature'
+    '200Music':
+      description: Successful response
+      content:
+       application/json:
+        schema:
+          $ref: '#/components/schemas/MusicArray'
+    '404':
+      description: Not found response
+      content:
+        text/plain:
+          schema:
+            title: Endpoint not found
+            type: string
+            example: Not found
